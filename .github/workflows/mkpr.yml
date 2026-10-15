@@ -1,0 +1,20 @@
+name: make a PR as github-actions
+on: workflow_dispatch
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b bot-change
+          echo v3 > owned/a.txt
+          git commit -am "bot changes the owned file"
+          git push origin bot-change
+          gh pr create --base main --head bot-change --title "bot changes the owned file" --body test
