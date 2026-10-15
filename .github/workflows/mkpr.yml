@@ -1,5 +1,11 @@
 name: make a PR as github-actions
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      file:
+        default: owned/a.txt
+      branch:
+        default: bot-change
 permissions:
   contents: write
   pull-requests: write
@@ -13,8 +19,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -b bot-change
-          echo v3 > owned/a.txt
+          git checkout -b ${{ inputs.branch }}
+          echo v3 > ${{ inputs.file }}
           git commit -am "bot changes the owned file"
-          git push origin bot-change
-          gh pr create --base main --head bot-change --title "bot changes the owned file" --body test
+          git push origin ${{ inputs.branch }}
+          gh pr create --base main --head ${{ inputs.branch }} --title "bot changes ${{ inputs.file }}" --body test
